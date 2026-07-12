@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerie — Atelier MFK</title>
+<meta name="description" content="Galerie de projets — restauration du patrimoine et ornementation par Atelier MFK. Château, Hôtel Negresco, chantiers historiques.">
+<meta name="author" content="Atelier MFK — Atelier MFK">
+<meta property="og:title" content="MFK Atelier — L'art de la restauration">
+<meta property="og:description" content="Plâtre, lumière et précision. Restauration du patrimoine et ornementation décorative.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noir:#0b0b0c;
+    --anthracite:#141416;
+    --graphite:#1d1d20;
+    --carbon:#26262a;
+    --line:#34343a;
+    --warm:#ece7df;
+    --warm-dim:#a39c91;
+    --warm-faint:#6f6a63;
+    --bronze:#b0894f;
+    --bronze-soft:#c9a66b;
+    --ease:cubic-bezier(.16,1,.3,1);
+    --serif:"Cormorant Garamond",Georgia,serif;
+    --sans:"Jost","Helvetica Neue",Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    background:var(--noir);color:var(--warm);font-family:var(--sans);
+    font-weight:300;line-height:1.6;overflow-x:hidden;
+  }
+  ::selection{background:var(--bronze);color:var(--noir)}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+
+  .wrap{max-width:1320px;margin:0 auto;padding:0 clamp(20px,5vw,80px)}
+  .label{
+    font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.42em;
+    text-transform:uppercase;color:var(--bronze-soft);
+  }
+  .serif{font-family:var(--serif)}
+
+  /* grain + vignette overlay */
+  .grain{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* ============ NAV ============ */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;
+    padding:22px clamp(20px,5vw,80px);
+    display:flex;justify-content:space-between;align-items:center;
+    transition:background .6s var(--ease),padding .6s var(--ease),border-color .6s var(--ease);
+    border-bottom:1px solid transparent;}
+  nav.scrolled{background:rgba(11,11,12,.72);backdrop-filter:blur(14px);
+    padding:15px clamp(20px,5vw,80px);border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:baseline;gap:11px;font-family:var(--serif);font-size:23px;letter-spacing:.04em;}
+  .brand b{font-weight:500;letter-spacing:.16em}
+  .brand span{font-size:10px;font-family:var(--sans);letter-spacing:.36em;color:var(--warm-dim);text-transform:uppercase}
+  .nav-links{display:flex;gap:38px;align-items:center}
+  .nav-links a{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-dim);
+    position:relative;transition:color .4s var(--ease)}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--bronze);transition:width .5s var(--ease)}
+  .nav-links a:hover{color:var(--warm)}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{border:1px solid var(--line);padding:10px 22px;border-radius:40px;color:var(--warm)!important;
+    transition:border-color .4s var(--ease),background .4s var(--ease)}
+  .nav-cta:hover{border-color:var(--bronze);background:rgba(176,137,79,.08)}
+  .lang-switch{display:flex;gap:2px;align-items:center;margin-left:8px;border:1px solid var(--line);border-radius:30px;padding:3px}
+  .lang-switch button{background:none;border:none;color:var(--warm-faint);font-family:var(--sans);
+    font-size:10px;letter-spacing:.16em;padding:6px 11px;border-radius:30px;cursor:pointer;transition:.4s var(--ease)}
+  .lang-switch button:hover{color:var(--warm)}
+  .lang-switch button.active{background:var(--bronze);color:var(--noir);font-weight:400}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
+  .burger span{width:26px;height:1.5px;background:var(--warm);transition:.4s var(--ease)}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;height:100svh;min-height:640px;overflow:hidden;display:flex;align-items:center}
+  .hero-bg{position:absolute;inset:-8% 0 -8% 0;will-change:transform}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:42% center;filter:grayscale(.18) brightness(.62) contrast(1.04)}
+  .hero-veil{position:absolute;inset:0;
+    background:
+      radial-gradient(120% 90% at 70% 30%,transparent 0%,rgba(11,11,12,.35) 55%,rgba(11,11,12,.86) 100%),
+      linear-gradient(180deg,rgba(11,11,12,.55) 0%,transparent 28%,transparent 55%,rgba(11,11,12,.92) 100%);}
+  .hero-glow{position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:soft-light;transition:background .25s ease;}
+  .hero-inner{position:relative;z-index:3;width:100%}
+  .hero-eyebrow{overflow:hidden;margin-bottom:30px}
+  .hero-eyebrow .label{display:inline-block;transform:translateY(110%);opacity:0;
+    animation:rise 1.1s var(--ease) .35s forwards}
+  .hero h1{font-family:var(--serif);font-weight:300;
+    font-size:clamp(58px,12.5vw,188px);line-height:.92;letter-spacing:-.01em;}
+  .hero h1 .ln{display:block;overflow:hidden}
+  .hero h1 .ln i{display:block;font-style:normal;transform:translateY(108%);
+    animation:rise 1.25s var(--ease) forwards}
+  .hero h1 .ln:nth-child(1) i{animation-delay:.5s}
+  .hero h1 .ln:nth-child(2) i{animation-delay:.66s}
+  .hero h1 em{font-style:italic;color:var(--bronze-soft)}
+  .hero-sub{display:flex;flex-wrap:wrap;align-items:flex-end;gap:34px;margin-top:42px;
+    opacity:0;animation:fade 1.4s var(--ease) 1s forwards}
+  .hero-sub p{max-width:430px;color:var(--warm-dim);font-size:16px;line-height:1.75}
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;padding:16px 30px;border-radius:44px;transition:.5s var(--ease)}
+  .btn-solid{background:var(--warm);color:var(--noir)}
+  .btn-solid:hover{background:var(--bronze-soft);transform:translateY(-2px)}
+  .btn-ghost{border:1px solid var(--line);color:var(--warm)}
+  .btn-ghost:hover{border-color:var(--bronze);transform:translateY(-2px)}
+  .btn .arw{transition:transform .5s var(--ease)}
+  .btn:hover .arw{transform:translateX(5px)}
+  .scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:4;
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    opacity:0;animation:fade 1.4s var(--ease) 1.5s forwards}
+  .scroll-cue .ln{width:1px;height:54px;background:linear-gradient(var(--bronze),transparent);position:relative;overflow:hidden}
+  .scroll-cue .ln::after{content:"";position:absolute;top:-54px;left:0;width:1px;height:54px;background:var(--warm);animation:drop 2.4s var(--ease) infinite}
+  .scroll-cue span{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--warm-faint)}
+
+  @keyframes rise{to{transform:translateY(0);opacity:1}}
+  @keyframes fade{to{opacity:1}}
+  @keyframes drop{0%{top:-54px}55%{top:54px}100%{top:54px}}
+
+  /* ============ MARQUEE ============ */
+  .marquee{border-block:1px solid var(--line);background:var(--anthracite);padding:20px 0;overflow:hidden;white-space:nowrap}
+  .marquee-track{display:inline-flex;gap:60px;animation:scrollx 38s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee-track span{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--warm-faint)}
+  .marquee-track span b{color:var(--bronze-soft);font-style:normal;font-weight:400;font-size:11px;font-family:var(--sans);letter-spacing:.3em;text-transform:uppercase;vertical-align:middle;margin-left:60px}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  /* ============ SECTION SHELL ============ */
+  section{position:relative}
+  .sec-head{display:flex;gap:30px;align-items:baseline;margin-bottom:clamp(48px,7vw,96px)}
+  .sec-head .num{font-family:var(--serif);font-size:15px;color:var(--bronze);min-width:42px}
+  .sec-head h2{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5.4vw,76px);line-height:1.02;letter-spacing:-.01em}
+  .sec-head h2 em{font-style:italic;color:var(--warm-dim)}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(38px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  .rv-d1{transition-delay:.12s}.rv-d2{transition-delay:.24s}.rv-d3{transition-delay:.36s}
+
+  /* ============ MANIFESTO ============ */
+  .manifesto{padding:clamp(110px,15vw,210px) 0}
+  .manifesto .big{font-family:var(--serif);font-weight:300;font-size:clamp(28px,4.4vw,60px);
+    line-height:1.22;letter-spacing:-.005em;max-width:18ch}
+  .manifesto .big em{font-style:italic;color:var(--bronze-soft)}
+  .manifesto .meta{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(36px,6vw,90px);margin-top:clamp(70px,9vw,120px);border-top:1px solid var(--line);padding-top:clamp(48px,7vw,80px);align-items:stretch}
+  .manifesto .meta-fig{position:relative;overflow:hidden;border-radius:3px;min-height:380px}
+  .manifesto .meta-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.6) brightness(.62) contrast(1.06);transition:filter 1.6s var(--ease),transform 2s var(--ease);transform:scale(1.04)}
+  .manifesto .meta-fig:hover img{filter:grayscale(0) brightness(.82);transform:scale(1)}
+  .manifesto .meta-fig::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(11,11,12,.55) 100%);pointer-events:none}
+  .manifesto .meta-fig .mark{position:absolute;left:22px;bottom:18px;z-index:2;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--warm);background:rgba(11,11,12,.55);backdrop-filter:blur(6px);padding:8px 14px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
+  .manifesto .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(28px,3vw,42px) clamp(20px,3vw,36px);align-self:center}
+  .manifesto .stat{position:relative;padding-left:18px;border-left:1px solid var(--line);transition:border-color .6s var(--ease)}
+  .manifesto .stat:hover{border-left-color:var(--bronze)}
+  .manifesto .stat h3{font-family:var(--serif);font-size:clamp(48px,5.5vw,68px);font-weight:300;color:var(--warm);line-height:1;letter-spacing:-.01em}
+  .manifesto .stat p{font-size:12px;color:var(--warm-dim);letter-spacing:.04em;margin-top:8px;line-height:1.5;max-width:24ch}
+
+  /* ============ STORY (asymmetric) ============ */
+  .story{padding:clamp(60px,9vw,120px) 0;display:flex;flex-direction:column;gap:clamp(90px,13vw,200px)}
+  .story-row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,6vw,100px);align-items:center}
+  .story-row.flip .story-txt{order:2}
+  .story-fig{position:relative;overflow:hidden;border-radius:3px}
+  .story-fig img{width:100%;height:clamp(380px,52vw,640px);object-fit:cover;
+    filter:grayscale(.32) contrast(1.03);transition:transform 1.6s var(--ease),filter 1.6s var(--ease);transform:scale(1.04)}
+  .story-fig:hover img{transform:scale(1);filter:grayscale(0) contrast(1.05)}
+  .story-fig figcaption{position:absolute;left:18px;bottom:16px;font-size:10px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--warm);background:rgba(11,11,12,.5);backdrop-filter:blur(6px);
+    padding:7px 13px;border-radius:30px;border:1px solid rgba(255,255,255,.08)}
+  .story-txt .label{display:block;margin-bottom:26px}
+  .story-txt h3{font-family:var(--serif);font-weight:300;font-size:clamp(30px,3.6vw,50px);line-height:1.08;margin-bottom:22px}
+  .story-txt h3 em{font-style:italic;color:var(--bronze-soft)}
+  .story-txt p{color:var(--warm-dim);font-size:15.5px;max-width:46ch;line-height:1.8}
+  .story-idx{font-family:var(--serif);font-size:14px;color:var(--bronze);margin-bottom:18px}
+
+  /* ============ PROJECTS ============ */
+  .projects{padding:clamp(90px,12vw,160px) 0}
+  .pgrid{columns:2;column-gap:22px}
+  .pcard{break-inside:avoid;margin-bottom:22px;position:relative;overflow:hidden;border-radius:3px;cursor:pointer;background:var(--graphite)}
+  .pcard img{width:100%;height:auto;filter:grayscale(1) brightness(.82);transition:filter 1.2s var(--ease),transform 1.6s var(--ease)}
+  .pcard:hover img{filter:grayscale(0) brightness(.92);transform:scale(1.04)}
+  .pcard-info{position:absolute;inset:auto 0 0 0;padding:26px 24px 22px;
+    background:linear-gradient(transparent,rgba(11,11,12,.9));
+    transform:translateY(14px);opacity:0;transition:.7s var(--ease)}
+  .pcard:hover .pcard-info{transform:none;opacity:1}
+  .pcard-info .pt{font-family:var(--serif);font-size:25px;font-weight:400;margin-bottom:5px}
+  .pcard-info .pm{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--bronze-soft)}
+  .pcard-info .pd{font-size:13px;color:var(--warm-dim);margin-top:9px;max-width:42ch}
+  .pcard .plus{position:absolute;top:18px;right:18px;width:38px;height:38px;border:1px solid rgba(255,255,255,.25);
+    border-radius:50%;display:grid;place-items:center;opacity:0;transform:scale(.7);transition:.6s var(--ease);font-size:18px;font-weight:300}
+  .pcard:hover .plus{opacity:1;transform:none}
+
+  /* ============ NEGRESCO band ============ */
+  .band{position:relative;height:clamp(420px,60vh,680px);overflow:hidden;display:flex;align-items:flex-end}
+  .band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.25) brightness(.6);transform:scale(1.06)}
+  .band-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,11,12,.5),transparent 40%,rgba(11,11,12,.85))}
+  .band-txt{position:relative;z-index:2;padding:0 clamp(20px,5vw,80px) clamp(50px,7vw,90px);max-width:760px}
+  .band-txt .label{margin-bottom:20px;display:block}
+  .band-txt h3{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5.5vw,72px);line-height:1.02}
+  .band-txt h3 em{font-style:italic;color:var(--bronze-soft)}
+  .band-txt p{color:var(--warm-dim);margin-top:20px;max-width:52ch;font-size:15.5px}
+
+  /* ============ NEGRESCO MINI-GALLERY ============ */
+  .neg-gal{padding:clamp(70px,9vw,120px) 0 clamp(40px,6vw,80px)}
+  .neg-gal-head{max-width:64ch;margin-bottom:clamp(36px,5vw,56px)}
+  .neg-gal-head .label{display:block;margin-bottom:14px}
+  .neg-gal-head p{color:var(--warm-dim);font-size:16.5px;line-height:1.55}
+  .neg-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .neg-item{position:relative;overflow:hidden;border-radius:3px;background:var(--graphite);min-height:280px}
+  .neg-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(.7) brightness(.78) contrast(1.05);transition:filter 1.3s var(--ease),transform 1.8s var(--ease);transform:scale(1.05)}
+  .neg-item:hover img{filter:grayscale(0) brightness(.96);transform:scale(1)}
+  .neg-item figcaption{position:absolute;inset:auto 0 0 0;z-index:2;padding:22px 20px 18px;display:flex;flex-direction:column;
+    background:linear-gradient(transparent,rgba(11,11,12,.92))}
+  .neg-item figcaption .t{font-family:var(--serif);font-size:19px;font-weight:400;line-height:1.15}
+  .neg-item figcaption .s{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--bronze-soft);margin-top:5px}
+  .neg-item:nth-child(1){grid-column:span 3;grid-row:span 2;min-height:580px}
+  .neg-item:nth-child(2){grid-column:span 3}
+  .neg-item:nth-child(3){grid-column:span 3}
+  .neg-item:nth-child(4){grid-column:span 2}
+  .neg-item:nth-child(5){grid-column:span 4}
+  @media(max-width:880px){
+    .neg-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+    .neg-item:nth-child(n){grid-column:span 2;grid-row:auto;min-height:260px}
+  }
+
+  /* ============ LEGACY / HERITAGE GALLERY ============ */
+  .legacy{padding:clamp(90px,12vw,160px) 0;background:var(--anthracite);border-block:1px solid var(--line)}
+  .lg-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:clamp(40px,6vw,72px)}
+  .lg-item{position:relative;overflow:hidden;border-radius:3px;background:var(--graphite);min-height:240px}
+  .lg-item img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;
+    filter:grayscale(.82) brightness(.78) contrast(1.04);transition:filter 1.3s var(--ease),transform 1.8s var(--ease);transform:scale(1.05)}
+  .lg-item:hover img{filter:grayscale(0) brightness(.94);transform:scale(1)}
+  .lg-cap{position:absolute;inset:auto 0 0 0;z-index:2;padding:24px 22px 20px;
+    background:linear-gradient(transparent,rgba(11,11,12,.92))}
+  .lg-cap .t{font-family:var(--serif);font-size:22px;font-weight:400;line-height:1.12;margin-bottom:4px}
+  .lg-cap .s{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--bronze-soft)}
+  .lg-w7{grid-column:span 7}.lg-w5{grid-column:span 5}.lg-w6{grid-column:span 6}
+  .lg-w4{grid-column:span 4}.lg-w8{grid-column:span 8}
+  .lg-tall{grid-row:span 2;min-height:496px}
+  @media(max-width:880px){
+    .lg-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+    .lg-w7,.lg-w5,.lg-w6,.lg-w4,.lg-w8{grid-column:span 2}
+    .lg-tall{grid-row:span 1;min-height:240px}
+  }
+
+  /* ============ TIMELINE ============ */
+  .exp{padding:clamp(100px,13vw,170px) 0}
+  .exp-grid{display:grid;grid-template-columns:1fr;gap:0}
+  .tl-row{display:grid;grid-template-columns:170px 1fr auto;gap:clamp(20px,4vw,60px);
+    padding:38px 0;border-top:1px solid var(--line);align-items:start;transition:.6s var(--ease)}
+  .tl-row:last-child{border-bottom:1px solid var(--line)}
+  .tl-row:hover{padding-left:14px}
+  .tl-row:hover .tl-yr{color:var(--bronze-soft)}
+  .tl-yr{font-family:var(--serif);font-size:18px;color:var(--warm-dim);letter-spacing:.04em;transition:color .5s var(--ease)}
+  .tl-main h4{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.6vw,30px);margin-bottom:6px}
+  .tl-main .pl{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--bronze-soft);margin-bottom:14px}
+  .tl-main p{color:var(--warm-dim);font-size:14.5px;max-width:60ch}
+  .tl-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm-faint);
+    border:1px solid var(--line);padding:6px 13px;border-radius:30px;white-space:nowrap}
+
+  /* CV card */
+  .cv{margin-top:80px;border:1px solid var(--line);border-radius:5px;background:linear-gradient(160deg,var(--graphite),var(--anthracite));
+    padding:clamp(30px,4vw,52px);display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;position:relative;overflow:hidden}
+  .cv::before{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border:1px solid var(--line);border-radius:50%;opacity:.4}
+  .cv::after{content:"";position:absolute;right:10px;top:10px;width:150px;height:150px;border:1px solid var(--line);border-radius:50%;opacity:.3}
+  .cv-l{position:relative;z-index:2}
+  .cv-l .label{display:block;margin-bottom:14px}
+  .cv-l h3{font-family:var(--serif);font-weight:300;font-size:clamp(26px,3vw,40px);line-height:1.1}
+  .cv-l p{color:var(--warm-dim);font-size:14px;margin-top:10px;max-width:44ch}
+  .cv-r{position:relative;z-index:2;display:flex;gap:14px;flex-wrap:wrap}
+
+  /* ============ ATELIER immersive ============ */
+  .atelier{position:relative;min-height:130vh;background:var(--noir)}
+  .atelier-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .atelier-sticky img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.4) brightness(.5) contrast(1.08);will-change:transform}
+  .atelier-veil{position:absolute;inset:0;background:radial-gradient(circle at center,transparent 0%,rgba(11,11,12,.7) 75%,var(--noir) 100%)}
+  .atelier-txt{position:relative;z-index:3;text-align:center;padding:0 24px;max-width:900px}
+  .atelier-txt .label{display:block;margin-bottom:30px}
+  .atelier-txt h2{font-family:var(--serif);font-weight:300;font-size:clamp(36px,7vw,104px);line-height:1.04;letter-spacing:-.01em}
+  .atelier-txt h2 em{font-style:italic;color:var(--bronze-soft)}
+  .atelier-txt p{color:var(--warm-dim);margin:30px auto 0;max-width:54ch;font-size:16px}
+  .spark{position:absolute;width:2px;height:2px;background:var(--bronze-soft);border-radius:50%;opacity:0;
+    box-shadow:0 0 6px 1px rgba(201,166,107,.7);animation:spark 5s linear infinite}
+  @keyframes spark{0%{opacity:0;transform:translateY(0) scale(1)}10%{opacity:.9}80%{opacity:.5}100%{opacity:0;transform:translateY(-120px) scale(.3)}}
+
+  /* ============ CONTACT ============ */
+  .contact{padding:clamp(110px,15vw,200px) 0;position:relative}
+  .contact-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(40px,7vw,110px);align-items:center}
+  .contact h2{font-family:var(--serif);font-weight:300;font-size:clamp(40px,6.5vw,96px);line-height:1;letter-spacing:-.01em;margin-bottom:30px}
+  .contact h2 em{font-style:italic;color:var(--bronze-soft)}
+  .contact .lead{color:var(--warm-dim);max-width:42ch;font-size:16px;margin-bottom:40px}
+  .ccard{border:1px solid var(--line);border-radius:6px;background:linear-gradient(160deg,var(--graphite),var(--anthracite));
+    padding:clamp(28px,3.5vw,44px);backdrop-filter:blur(8px)}
+  .crow{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--line);transition:.4s var(--ease)}
+  .crow:last-child{border-bottom:none}
+  .crow:hover{padding-left:8px}
+  .crow .ck{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--warm-faint)}
+  .crow .cv2{font-family:var(--serif);font-size:19px;color:var(--warm);transition:color .4s var(--ease)}
+  .crow:hover .cv2{color:var(--bronze-soft)}
+  .map{margin-top:26px;height:200px;border-radius:5px;overflow:hidden;border:1px solid var(--line);filter:grayscale(1) invert(.92) contrast(.9);opacity:.85}
+  .map iframe{width:100%;height:100%;border:0}
+
+  /* ============ FOOTER ============ */
+  footer{border-top:1px solid var(--line);padding:60px 0 50px}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px}
+  .foot .brand{font-size:20px}
+  .foot-nav{display:flex;gap:30px;flex-wrap:wrap}
+  .foot-nav a{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-faint);transition:color .4s var(--ease)}
+  .foot-nav a:hover{color:var(--warm)}
+  .foot-fine{margin-top:44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    font-size:11px;letter-spacing:.1em;color:var(--warm-faint)}
+
+  /* ============ LIGHTBOX ============ */
+  .lb{position:fixed;inset:0;z-index:2000;background:rgba(8,8,9,.95);backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;pointer-events:none;transition:opacity .6s var(--ease)}
+  .lb.open{opacity:1;pointer-events:auto}
+  .lb img{max-width:90vw;max-height:82vh;border-radius:3px;transform:scale(.94);transition:transform .7s var(--ease);box-shadow:0 40px 120px rgba(0,0,0,.6)}
+  .lb.open img{transform:scale(1)}
+  .lb-cap{position:absolute;bottom:34px;left:0;right:0;text-align:center;color:var(--warm-dim);font-size:13px;letter-spacing:.1em}
+  .lb-cap b{color:var(--bronze-soft);font-weight:400}
+  .lb-x{position:absolute;top:28px;right:34px;width:46px;height:46px;border:1px solid var(--line);border-radius:50%;
+    background:none;color:var(--warm);font-size:20px;cursor:pointer;transition:.4s var(--ease)}
+  .lb-x:hover{border-color:var(--bronze);transform:rotate(90deg)}
+
+  /* ============ RESPONSIVE ============ */
+  @media(max-width:1024px) and (min-width:881px){
+    .manifesto .meta{grid-template-columns:1fr;gap:40px}
+    .manifesto .meta-fig{min-height:280px}
+  }
+  @media(max-width:880px){
+    .nav-links{position:fixed;inset:0;flex-direction:column;justify-content:center;gap:30px;
+      background:rgba(11,11,12,.97);backdrop-filter:blur(18px);transform:translateX(100%);transition:transform .6s var(--ease)}
+    .nav-links.open{transform:none}
+    .nav-links a{font-size:18px}
+    .lang-switch{margin-left:0;margin-top:10px}
+    .lang-switch button{font-size:13px;padding:8px 16px}
+    .burger{display:flex;z-index:1001}
+    .burger.x span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+    .burger.x span:nth-child(2){opacity:0}
+    .burger.x span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+    .manifesto .meta{grid-template-columns:1fr;gap:32px}
+    .manifesto .meta-fig{min-height:240px}
+    .manifesto .stats{gap:24px 20px}
+    .story-row,.story-row.flip .story-txt{grid-template-columns:1fr;order:0}
+    .story-fig{order:-1!important}
+    .pgrid{columns:1}
+    .tl-row{grid-template-columns:1fr;gap:10px}
+    .tl-tag{justify-self:start}
+    .contact-inner{grid-template-columns:1fr}
+    .cv{flex-direction:column;align-items:flex-start}
+  }
+
+  /* ============ GALERIE PAGE ============ */
+  .gal-hero{padding:clamp(140px,16vw,200px) 0 clamp(60px,8vw,100px);border-bottom:1px solid var(--line)}
+  .gal-hero .label{display:block;margin-bottom:24px}
+  .gal-hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(46px,7.5vw,108px);line-height:.95;letter-spacing:-.02em;color:var(--warm)}
+  .gal-hero h1 em{font-style:italic;color:var(--bronze-soft)}
+  .gal-hero p{max-width:62ch;color:var(--warm-dim);font-size:17px;line-height:1.65;margin-top:36px}
+
+  .gal-sec{padding:clamp(80px,11vw,140px) 0;border-block-end:1px solid var(--line)}
+  .gal-sec:last-of-type{border-block-end:none}
+  .gal-sec-head{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:30px;margin-bottom:clamp(40px,6vw,72px)}
+  .gal-sec-head .l h2{font-family:var(--serif);font-weight:300;font-size:clamp(32px,4.5vw,56px);line-height:1.05;letter-spacing:-.01em}
+  .gal-sec-head .l h2 em{font-style:italic;color:var(--bronze-soft)}
+  .gal-sec-head .l .num{font-family:var(--serif);font-style:italic;color:var(--bronze);font-size:18px;margin-bottom:14px;display:inline-block}
+  .gal-sec-head .r{color:var(--warm-faint);font-size:12px;letter-spacing:.18em;text-transform:uppercase;text-align:right;line-height:1.7;max-width:40ch}
+
+  .gg{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:280px;gap:14px}
+  .gg figure{position:relative;overflow:hidden;border-radius:3px;background:var(--graphite);cursor:zoom-in}
+  .gg figure img{width:100%;height:100%;object-fit:cover;display:block;
+    filter:grayscale(.55) brightness(.82) contrast(1.05);transition:filter 1.2s var(--ease),transform 1.6s var(--ease);transform:scale(1.04)}
+  .gg figure:hover img{filter:grayscale(0) brightness(1);transform:scale(1)}
+  .gg figure::after{content:"+";position:absolute;top:14px;right:16px;color:var(--warm);font-family:var(--serif);font-size:22px;font-weight:300;
+    opacity:0;transition:opacity .5s var(--ease);z-index:2}
+  .gg figure:hover::after{opacity:.85}
+  .gg figure figcaption{position:absolute;inset:auto 0 0 0;z-index:2;padding:18px 16px 14px;
+    background:linear-gradient(transparent,rgba(11,11,12,.88));opacity:0;transition:opacity .5s var(--ease)}
+  .gg figure:hover figcaption{opacity:1}
+  .gg figure figcaption .t{display:block;font-family:var(--serif);font-size:16px;font-weight:400;line-height:1.2}
+  .gg figure figcaption .s{display:block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--bronze-soft);margin-top:4px}
+  /* Column spans */
+  .gg .w-3{grid-column:span 3}
+  .gg .w-4{grid-column:span 4}
+  .gg .w-5{grid-column:span 5}
+  .gg .w-6{grid-column:span 6}
+  .gg .w-7{grid-column:span 7}
+  .gg .w-8{grid-column:span 8}
+  .gg .w-12{grid-column:1 / -1}
+  /* Row spans (height multiples) */
+  .gg .r-1{grid-row:span 1}
+  .gg .r-2{grid-row:span 2}
+  .gg .r-3{grid-row:span 3}
+
+  /* Bottom CTA */
+  .gal-cta{padding:clamp(100px,13vw,160px) 0;text-align:center}
+  .gal-cta .label{display:block;margin-bottom:18px}
+  .gal-cta h2{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5vw,62px);line-height:1.1;letter-spacing:-.01em;margin-bottom:42px}
+  .gal-cta h2 em{font-style:italic;color:var(--bronze-soft)}
+
+  @media(max-width:880px){
+    .gg{grid-template-columns:repeat(2,1fr);grid-auto-rows:220px;gap:8px}
+    .gg .w-3,.gg .w-4,.gg .w-5,.gg .w-6,.gg .w-7,.gg .w-8,.gg .w-12{grid-column:span 2}
+    .gg .r-1,.gg .r-2,.gg .r-3{grid-row:span 1}
+    .gal-sec-head{flex-direction:column;align-items:flex-start}
+    .gal-sec-head .r{text-align:left}
+    .gg figure figcaption{opacity:1}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="/" class="brand"><b>MFK</b><span>Atelier</span></a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="navlinks">
+    <a href="/#savoir" data-i18n="nav_savoir">Savoir-faire</a>
+    <a href="/#projets" data-i18n="nav_projets">Projets</a>
+    <a href="/#heritage" data-i18n="nav_heritage">Héritage</a>
+    <a href="/#parcours" data-i18n="nav_parcours">Parcours</a>
+    <a href="/#atelier" data-i18n="nav_atelier">Atelier</a>
+    <a href="/#contact" class="nav-cta" data-i18n="nav_contact">Contact</a>
+    <div class="lang-switch" id="langSwitch">
+      <button data-lang="fr" class="active">FR</button>
+      <button data-lang="en">EN</button>
+      <button data-lang="tr">TR</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ GALERIE HERO ============ -->
+<header class="gal-hero wrap" id="top">
+  <span class="label rv" data-i18n="gh_eyebrow">Galerie · Atelier MFK</span>
+  <h1 class="rv"><span data-i18n="gh_h1_a">Le geste,</span> <em data-i18n="gh_h1_b">au fil des chantiers</em></h1>
+  <p class="rv" data-i18n="gh_intro">Une sélection de chantiers menés sur le patrimoine — du château classé aux palaces de la Côte d'Azur, de l'ornement modelé au plafond doré. Au fil des images, la matière, la main et le geste qui se répète.</p>
+</header>
+
+<!-- ============ SECTION I — CHATEAU ============ -->
+<section class="gal-sec wrap" id="chateau">
+  <div class="gal-sec-head rv">
+    <div class="l">
+      <span class="num">I</span>
+      <h2 data-i18n="sec1_h">Château — <em>Île-de-France</em></h2>
+    </div>
+    <div class="r" data-i18n="sec1_meta">2024 — 2025 · Tour-horloge<br>Ornements de façade · stuc · modelage</div>
+  </div>
+  <div class="gg">
+    <figure class="rv w-7 r-2" data-img="../images/hero_v2.jpg">
+      <img loading="lazy" src="../images/hero_v2.jpg" alt="Tour-horloge — détail du fronton et du cadran">
+      <figcaption><span class="t">Tour-horloge</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-5 r-2" data-img="../images/proj_main.jpg">
+      <img loading="lazy" src="../images/proj_main.jpg" alt="Tour-horloge avec souche de cheminée en brique">
+      <figcaption><span class="t">Tour & cheminée</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv w-4 r-1" data-img="../images/story_modil.jpg">
+      <img loading="lazy" src="../images/story_modil.jpg" alt="Modillons et corniche">
+      <figcaption><span class="t">Modillons & corniche</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-4 r-1" data-img="../images/story_arch2.jpg">
+      <img loading="lazy" src="../images/story_arch2.jpg" alt="Détail d'ornement de façade">
+      <figcaption><span class="t">Ornement de façade</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d2 w-4 r-1" data-img="../images/story_pil_b.jpg">
+      <img loading="lazy" src="../images/story_pil_b.jpg" alt="Base de pilastre">
+      <figcaption><span class="t">Pilastre · base</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv w-6 r-1" data-img="../images/story_pil_a.jpg">
+      <img loading="lazy" src="../images/story_pil_a.jpg" alt="Pilastre cannelé en plâtre">
+      <figcaption><span class="t">Pilastre cannelé</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-6 r-1" data-img="../images/story_pil_c.jpg">
+      <img loading="lazy" src="../images/story_pil_c.jpg" alt="Pilastre restauré en contexte">
+      <figcaption><span class="t">Contexte de façade</span><span class="s" data-i18n="g_cap_chateau">Château · 2024–2025</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ SECTION II — NEGRESCO ============ -->
+<section class="gal-sec wrap" id="negresco">
+  <div class="gal-sec-head rv">
+    <div class="l">
+      <span class="num">II</span>
+      <h2 data-i18n="sec2_h">Hôtel Negresco — <em>Nice</em></h2>
+    </div>
+    <div class="r" data-i18n="sec2_meta">2025 · Promenade des Anglais<br>Décors muraux · corniches · chapiteaux</div>
+  </div>
+  <div class="gg">
+    <figure class="rv w-7 r-2" data-img="../images/neg_band.jpg">
+      <img loading="lazy" src="../images/neg_band.jpg" alt="Façade ornementée — détail architectural">
+      <figcaption><span class="t">Façade — composition</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-5 r-2" data-img="../images/neg_card.jpg">
+      <img loading="lazy" src="../images/neg_card.jpg" alt="Chapiteau corinthien">
+      <figcaption><span class="t">Chapiteau corinthien</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+    <figure class="rv w-6 r-1" data-img="../images/neg_bal.jpg">
+      <img loading="lazy" src="../images/neg_bal.jpg" alt="Balustres et corniche">
+      <figcaption><span class="t">Balustres & corniche</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-6 r-1" data-img="../images/neg_laurel.jpg">
+      <img loading="lazy" src="../images/neg_laurel.jpg" alt="Couronne de laurier — fronton">
+      <figcaption><span class="t">Couronne de laurier</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+    <figure class="rv w-4 r-1" data-img="../images/neg_artisan.jpg">
+      <img loading="lazy" src="../images/neg_artisan.jpg" alt="Artisan au travail sur l'ornement">
+      <figcaption><span class="t">Geste, en place</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-8 r-1" data-img="../images/neg_view.jpg">
+      <img loading="lazy" src="../images/neg_view.jpg" alt="Corniche courbe au-dessus de la Promenade">
+      <figcaption><span class="t">Corniche courbe</span><span class="s" data-i18n="g_cap_neg">Negresco · 2025</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ SECTION III — PATRIMOINE ============ -->
+<section class="gal-sec wrap" id="patrimoine">
+  <div class="gal-sec-head rv">
+    <div class="l">
+      <span class="num">III</span>
+      <h2 data-i18n="sec3_h">Patrimoine — <em>chantiers passés</em></h2>
+    </div>
+    <div class="r" data-i18n="sec3_meta">Istanbul · Paris<br>Palais, mausolées & monuments — dorure, fresque, ornement</div>
+  </div>
+  <div class="gg">
+    <figure class="rv w-7 r-2" data-img="../images/pf_fresco_work.jpg">
+      <img loading="lazy" src="../images/pf_fresco_work.jpg" alt="Restauration d'un plafond doré">
+      <figcaption><span class="t">Plafond peint & doré</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-5 r-2" data-img="../images/pf_ceiling_gold.jpg">
+      <img loading="lazy" src="../images/pf_ceiling_gold.jpg" alt="Plafond doré à la feuille">
+      <figcaption><span class="t">Dorure à la feuille</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv w-6 r-1" data-img="../images/pf_craftsmen.jpg">
+      <img loading="lazy" src="../images/pf_craftsmen.jpg" alt="Artisans au travail sur un panneau">
+      <figcaption><span class="t">Modelage & reprise</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-6 r-1" data-img="../images/pf_baroque.jpg">
+      <img loading="lazy" src="../images/pf_baroque.jpg" alt="Décor baroque doré">
+      <figcaption><span class="t">Décors baroques</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv w-4 r-1" data-img="../images/pf_ceiling_red.jpg">
+      <img loading="lazy" src="../images/pf_ceiling_red.jpg" alt="Plafond polychrome">
+      <figcaption><span class="t">Peinture polychrome</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-4 r-1" data-img="../images/pf_medallion.jpg">
+      <img loading="lazy" src="../images/pf_medallion.jpg" alt="Médaillon peint">
+      <figcaption><span class="t">Médaillon peint</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+    <figure class="rv rv-d2 w-4 r-1" data-img="../images/pf_craftsmen2.jpg">
+      <img loading="lazy" src="../images/pf_craftsmen2.jpg" alt="Travail fin au sol en atelier">
+      <figcaption><span class="t">Nettoyage & retouche</span><span class="s" data-i18n="g_cap_pat">Patrimoine</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ SECTION IV — ATELIER ============ -->
+<section class="gal-sec wrap" id="atelier-gal">
+  <div class="gal-sec-head rv">
+    <div class="l">
+      <span class="num">IV</span>
+      <h2 data-i18n="sec4_h">Atelier — <em>lieux & matières</em></h2>
+    </div>
+    <div class="r" data-i18n="sec4_meta">Salons, boiseries & mémoire des murs</div>
+  </div>
+  <div class="gg">
+    <figure class="rv w-7 r-2" data-img="../images/salon_a.jpg">
+      <img loading="lazy" src="../images/salon_a.jpg" alt="Grand salon d'un château en restauration">
+      <figcaption><span class="t">Grand salon</span><span class="s" data-i18n="g_cap_at">Atelier · in situ</span></figcaption>
+    </figure>
+    <figure class="rv rv-d1 w-5 r-2" data-img="../images/salon_b.jpg">
+      <img loading="lazy" src="../images/salon_b.jpg" alt="Salon de château aux boiseries patinées">
+      <figcaption><span class="t">Boiseries patinées</span><span class="s" data-i18n="g_cap_at">Atelier · in situ</span></figcaption>
+    </figure>
+    <figure class="rv w-12 r-1" data-img="../images/salon_ruin.jpg">
+      <img loading="lazy" src="../images/salon_ruin.jpg" alt="Espace en cours de restauration — état initial">
+      <figcaption><span class="t">État initial</span><span class="s" data-i18n="g_cap_at">Avant restauration</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="gal-cta wrap">
+  <span class="label rv" data-i18n="cta_eyebrow">Un projet en tête ?</span>
+  <h2 class="rv"><span data-i18n="cta_h_a">Parlons</span> <em data-i18n="cta_h_b">de votre chantier</em></h2>
+  <a href="/#contact" class="btn btn-solid rv"><span data-i18n="cta_btn">Demander un devis</span> <span class="arw">→</span></a>
+</section>
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a href="/" class="brand"><b>MFK</b><span>Atelier</span></a>
+      <div class="foot-nav">
+        <a href="/#savoir" data-i18n="nav_savoir">Savoir-faire</a>
+        <a href="/#projets" data-i18n="nav_projets">Projets</a>
+        <a href="/#heritage" data-i18n="nav_heritage">Héritage</a>
+        <a href="/#parcours" data-i18n="nav_parcours">Parcours</a>
+        <a href="/#atelier" data-i18n="nav_atelier">Atelier</a>
+        <a href="/#contact" data-i18n="nav_contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-fine">
+      <span data-i18n="foot_c">© <span id="yr"></span> Atelier MFK — Atelier MFK. Restauration d'art & ornementation.</span>
+      <span data-i18n="foot_q">Plâtre, lumière et précision.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <button class="lb-x" id="lbX" aria-label="Fermer">✕</button>
+  <img loading="lazy" id="lbImg" src="" alt="">
+  <div class="lb-cap"><b id="lbT"></b> — <span id="lbM"></span></div>
+</div>
+
+<script>
+  // nav scroll state
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>40)},{passive:true});
+
+  // burger
+  const burger=document.getElementById('burger'),navlinks=document.getElementById('navlinks');
+  burger.addEventListener('click',()=>{burger.classList.toggle('x');navlinks.classList.toggle('open')});
+  navlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('x');navlinks.classList.remove('open')}));
+
+  // reveal on scroll
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.16});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  // hero parallax + mouse glow
+  const heroBg=document.getElementById('heroBg'),heroGlow=document.getElementById('heroGlow');
+  addEventListener('scroll',()=>{const y=scrollY;if(y<innerHeight){heroBg.style.transform='translateY('+(y*.28)+'px) scale(1.05)'}},{passive:true});
+  addEventListener('mousemove',(e)=>{
+    const x=e.clientX/innerWidth,y=e.clientY/innerHeight;
+    heroBg.style.setProperty('--mx',x);
+    heroBg.style.transform='translate('+((x-.5)*-18)+'px,'+((y-.5)*-14)+'px) scale(1.06)';
+    heroGlow.style.background='radial-gradient(420px circle at '+(x*100)+'% '+(y*100)+'%,rgba(201,166,107,.18),transparent 60%)';
+  });
+
+  // atelier subtle parallax
+  const atelierImg=document.getElementById('atelierImg');
+  addEventListener('scroll',()=>{
+    const s=document.querySelector('.atelier');const r=s.getBoundingClientRect();
+    if(r.top<innerHeight&&r.bottom>0){const p=(innerHeight-r.top)/(innerHeight+r.height);atelierImg.style.transform='scale(1.12) translateY('+((p-.5)*40)+'px)'}
+  },{passive:true});
+
+  // sparks
+  const sp=document.getElementById('sparks');
+  for(let i=0;i<22;i++){const s=document.createElement('div');s.className='spark';
+    s.style.left=Math.random()*100+'%';s.style.bottom=Math.random()*60+'%';
+    s.style.animationDelay=(Math.random()*5)+'s';s.style.animationDuration=(3+Math.random()*4)+'s';
+    sp.appendChild(s)}
+
+  // marquee handled by applyLang (i18n)
+
+  // lightbox
+  const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg'),lbT=document.getElementById('lbT'),lbM=document.getElementById('lbM'),lbX=document.getElementById('lbX');
+  document.querySelectorAll('.pcard, .gg figure[data-img]').forEach(c=>{
+    c.addEventListener('click',()=>{
+      lbImg.src=c.querySelector('img').src;
+      const t = c.dataset.t || c.querySelector('figcaption .t')?.textContent || '';
+      const m = c.dataset.m || c.querySelector('figcaption .s')?.textContent || '';
+      lbT.textContent=t; lbM.textContent=m;
+      lb.classList.add('open');document.body.style.overflow='hidden';
+    });
+  });
+  function closeLb(){lb.classList.remove('open');document.body.style.overflow=''}
+  lbX.addEventListener('click',closeLb);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLb()});
+  addEventListener('keydown',e=>{if(e.key==='Escape')closeLb()});
+
+  // CV download (guard — only on index)
+  const cvBtn = document.getElementById('cvBtn');
+  if (cvBtn) {
+    cvBtn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      window.print();
+    });
+  }
+
+  // ===== i18n DICTIONARY =====
+  const I18N = {
+    fr: {
+      docTitle:"Galerie — Atelier MFK",
+      gh_eyebrow:"Galerie · Atelier MFK", gh_h1_a:"Le geste,", gh_h1_b:"au fil des chantiers",
+      gh_intro:"Une sélection de chantiers menés sur le patrimoine — du château classé aux palaces de la Côte d\u0027Azur, de l\u0027ornement modelé au plafond doré. Au fil des images, la matière, la main et le geste qui se répète.",
+      sec1_h:"Château — <em>Île-de-France</em>", sec1_meta:"2024 — 2025 · Tour-horloge<br>Ornements de façade · stuc · modelage",
+      sec2_h:"Hôtel Negresco — <em>Nice</em>", sec2_meta:"2025 · Promenade des Anglais<br>Décors muraux · corniches · chapiteaux",
+      sec3_h:"Patrimoine — <em>chantiers passés</em>", sec3_meta:"Istanbul · Paris<br>Palais, mausolées & monuments — dorure, fresque, ornement",
+      sec4_h:"Atelier — <em>lieux & matières</em>", sec4_meta:"Salons, boiseries & mémoire des murs",
+      g_cap_chateau:"Château · 2024–2025", g_cap_neg:"Negresco · 2025", g_cap_pat:"Patrimoine", g_cap_at:"Atelier · in situ",
+      cta_eyebrow:"Un projet en tête ?", cta_h_a:"Parlons", cta_h_b:"de votre chantier", cta_btn:"Demander un devis",
+      nav_savoir:"Savoir-faire", nav_projets:"Projets", nav_heritage:"Héritage", nav_parcours:"Parcours", nav_atelier:"Atelier", nav_contact:"Contact",
+      hero_eyebrow:"Restauration d'art · Ornementation · Patrimoine",
+      hero_sub:"Plâtre, lumière et précision. Vingt années au service du patrimoine — du modelage à la dorure, de la fresque à la pierre.",
+      hero_cta1:"Voir les projets", hero_cta2:"Découvrir l'atelier", scroll:"Défiler",
+      mq1:"Modelage <b>Sculpture décorative</b>", mq2:"Dorure à la feuille <b>Patine</b>", mq3:"Stuc & moulures <b>Ornementation</b>", mq4:"Peinture murale <b>Fresque</b>", mq5:"Restauration <b>Patrimoine</b>",
+      manifesto:"L'ornement n'est pas un décor. C'est <em>la mémoire d'un geste</em>, rendue à la lumière — pièce après pièce, à la main.",
+      stat1:"années de savoir-faire", stat2:"artisans à l'atelier aujourd'hui", stat4:"artisans encadrés sur chantier", stat3:"pays — Istanbul · Paris · Côte d'Azur", meta_mark:"L'atelier · à la main",
+      story_h:"Un savoir-faire <em>de la main</em>",
+      story1_idx:"— I · Modelage", story1_lbl:"Sculpture & ornement", story1_h:"Donner forme <em>à la matière</em>",
+      story1_p:"Acanthes, rosaces, modillons et consoles : chaque ornement est modelé, moulé puis ajusté à son emplacement d'origine. La règle est simple — restituer le geste du premier artisan, sans le trahir.",
+      story1_cap:"Modillons & corniche · plâtre",
+      story2_idx:"— II · Précision", story2_lbl:"Géométrie & lumière", story2_h:"La rigueur <em>du trait</em>",
+      story2_p:"Une corniche n'est juste que si l'ombre l'est aussi. Profils, denticules et ressauts sont tracés au calibre, profilés au gabarit, puis éprouvés sous la lumière rasante avant la pose.",
+      story2_cap:"Pilastre · base & profil",
+      story3_idx:"— III · Composition", story3_lbl:"Façade & composition", story3_h:"À l'échelle <em>du bâti</em>",
+      story3_p:"Du fronton à la tourelle, de la console au cartouche : l'ornement reprend sa place dans la composition générale de l'édifice. Le détail ne vaut que par l'ensemble qu'il sert.",
+      story3_cap:"Ornement de façade · plâtre",
+      story4_idx:"— IV · Matière", story4_lbl:"Plâtre, pierre & feuille d'or", story4_h:"Le temps <em>retenu</em>",
+      story4_p:"Plâtre fin, pigments naturels, dorure traditionnelle à la feuille : des matières choisies pour vieillir juste. Restaurer, c'est rendre une surface au temps — pas l'y soustraire.",
+      story4_cap:"Pilastre cannelé · plâtre",
+      proj_h:"Projets <em>choisis</em>",
+      proj1_t:"Château — Tour-horloge", proj1_m:"Île-de-France · 2024–2025", proj1_d:"Fronton, modillons & cadran · stuc & ornementation",
+      proj2_t:"Château — Façades & ornements", proj2_m:"Île-de-France · 2024–2025", proj2_d:"Ornements de façade, tourelles & consoles",
+      proj3_t:"Hôtel Negresco — Nice", proj3_m:"Côte d'Azur · 2025", proj3_d:"Décors muraux, consolidation, corniches & façade",
+      proj4_t:"Console & corniche", proj4_m:"Chantier patrimonial · 2025", proj4_d:"Dégagement, moulage & repose à l'identique",
+      proj5_t:"Relief d'acanthe", proj5_m:"Ornementation · 2025", proj5_d:"Nettoyage, comblement & retouche au plâtre fin",
+      proj6_t:"Rosaces & modillons", proj6_m:"Atelier · 2025", proj6_d:"Tournage, profilage & calibrage avant pose",
+      band_lbl:"Pièce maîtresse · Côte d'Azur", band_h:"Le palace <em>retrouvé</em>",
+      band_p:"Sur la Promenade des Anglais, la façade d'un palace emblématique : réparation des décors muraux, consolidation et renforcement des structures, reprise des corniches et de l'ornementation extérieure. Un travail d'orfèvre à l'échelle d'un monument.",
+      neg_gal_lbl:"Sur le chantier", neg_gal_p:"Détails et gestes — ornements de façade, balustres, chapiteaux et frontons retrouvent leur dessin d'origine.", neg1_t:"Chapiteau corinthien", neg1_s:"Acanthe & volute", neg2_t:"Balustres & corniche", neg2_s:"Balcon courbe · plâtre", neg3_t:"Couronne de laurier", neg3_s:"Fronton · modelage", neg4_t:"À la main, en place", neg4_s:"Reprise & ajustement", neg5_t:"Corniche courbe", neg5_s:"Au-dessus de la Promenade",
+      her_h:"Le geste, <em>au fil des chantiers</em>",
+      her_p:"Au-delà des lieux, ce sont les gestes qui restent : modeler, mouler, dorer, retoucher. Vingt années de travail sur le patrimoine — des palais impériaux aux plafonds dorés, de la fresque à l'ornement.",
+      her1_t:"Restauration de plafonds peints & dorés", her1_s:"Dorure · peinture décorative",
+      her2_t:"Dorure à la feuille d'or", her2_s:"Plafonds patrimoniaux",
+      her3_t:"Modelage & reprise d'ornements", her3_s:"Travail d'atelier · à la main",
+      her4_t:"Décors baroques & stucs dorés", her4_s:"Ornementation · patine",
+      her5_t:"Peinture murale polychrome", her5_s:"Pigments naturels · fresque",
+      her6_t:"Médaillons & rosaces peints", her6_s:"Composition décorative",
+      her7_t:"Nettoyage, comblement & retouche", her7_s:"Précision · patrimoine",
+      exp_h:"Le <em>parcours</em>",
+      exp1_yr:"Depuis 2025", exp1_h:"Fondateur — Atelier MFK", exp1_pl:"Micro-entreprise · France",
+      exp1_p:"Atelier de restauration et d'ornementation réunissant une équipe de 7 artisans. Restauration d'art, décoration murale, dorure et stuc — pour clients privés, architectes et chantiers de patrimoine, en France et sur la Côte d'Azur.", exp1_tag:"Équipe de 7",
+      exp2_yr:"Depuis 2004", exp2_h:"Artiste plasticien — Œuvres & commandes", exp2_pl:"Istanbul · Ankara · Paris",
+      exp2_p:"Création d'œuvres originales exposées à Istanbul, Ankara et Paris. Commandes sur mesure : croquis, étude technique et exécution finale.", exp2_tag:"Beaux-Arts",
+      exp3_h:"Chef de projet — Patrimoine impérial", exp3_pl:"Ministère de la Culture · Istanbul",
+      exp3_p:"Direction de la restauration des mausolées des sultans Abdülhamid II, Mahmud II et Abdülaziz. Supervision de plus de 57 artisans : céramique, peinture murale, bois et stuc.", exp3_tag:"57 artisans",
+      exp4_h:"Directeur de chantier — Palais historiques", exp4_pl:"Palais Fehime & Hatice Sultan · Istanbul",
+      exp4_p:"Restauration de céramiques, stucs, bois et peintures murales. Coordination d'une équipe de 15 personnes selon les méthodes patrimoniales traditionnelles.", exp4_tag:"15 personnes",
+      exp5_h:"Restaurateur d'art — Monuments religieux", exp5_pl:"Églises orthodoxes · Istanbul",
+      exp5_p:"Restauration d'icônes, peintures murales, bois et céramiques. Application de feuilles d'or selon la dorure traditionnelle.", exp5_tag:"Dorure",
+      exp6_h:"Licence en Beaux-Arts", exp6_pl:"Université Marmara · Istanbul",
+      exp6_p:"Techniques de peinture, théorie de la couleur, fresque murale et grand format. Approche croisée entre art traditionnel et contemporain.", exp6_tag:"Diplôme",
+      cv_lbl:"Dossier complet", cv_h:"Curriculum vitæ — Atelier MFK", cv_p:"Le parcours détaillé, les compétences et les références, en un document.",
+      cv_btn:"Télécharger le CV", cv_btn2:"Me contacter",
+      at_lbl:"Sur les chantiers", at_h:"Où la matière <em>prend forme</em>",
+      at_p:"Salons aux boiseries patinées, tableaux d'arches romaines, plafonds à médaillon : nos chantiers se déroulent dans des lieux où le geste répond à la mémoire des murs.",
+      ct_h:"Parlons de <em>votre projet</em>", ct_p:"Restauration, ornementation, dorure ou commande sur mesure — chaque chantier commence par une conversation.",
+      ct_btn:"Écrire à l'atelier", ct_mail:"Courriel", ct_loc:"Atelier",
+      foot_c:"© <span id='yr'></span> Atelier MFK — Atelier MFK. Restauration d'art & ornementation.", foot_q:"Plâtre, lumière et précision."
+    },
+    en: {
+      docTitle:"Gallery — Atelier MFK",
+      gh_eyebrow:"Gallery · Atelier MFK", gh_h1_a:"The gesture,", gh_h1_b:"across the sites",
+      gh_intro:"A selection of heritage projects — from listed châteaux to French Riviera palaces, from modelled ornament to gilded ceilings. Through the images: matter, hand, and the gesture repeated.",
+      sec1_h:"Château — <em>Île-de-France</em>", sec1_meta:"2024 — 2025 · Clock tower<br>Façade ornaments · stucco · modelling",
+      sec2_h:"Hôtel Negresco — <em>Nice</em>", sec2_meta:"2025 · Promenade des Anglais<br>Wall décor · cornices · capitals",
+      sec3_h:"Heritage — <em>past projects</em>", sec3_meta:"Istanbul · Paris<br>Palaces, mausoleums & monuments — gilding, fresco, ornament",
+      sec4_h:"Atelier — <em>places & materials</em>", sec4_meta:"Salons, woodwork & the memory of walls",
+      g_cap_chateau:"Château · 2024–2025", g_cap_neg:"Negresco · 2025", g_cap_pat:"Heritage", g_cap_at:"Atelier · in situ",
+      cta_eyebrow:"A project in mind?", cta_h_a:"Let\u0027s talk", cta_h_b:"about your project", cta_btn:"Request a quote",
+      nav_savoir:"Craft", nav_projets:"Projects", nav_heritage:"Heritage", nav_parcours:"Background", nav_atelier:"Atelier", nav_contact:"Contact",
+      hero_eyebrow:"Art restoration · Ornamentation · Heritage",
+      hero_sub:"Plaster, light and precision. Twenty years in the service of heritage — from modelling to gilding, from fresco to stone.",
+      hero_cta1:"View projects", hero_cta2:"Discover the atelier", scroll:"Scroll",
+      mq1:"Modelling <b>Decorative sculpture</b>", mq2:"Gold-leaf gilding <b>Patina</b>", mq3:"Stucco & mouldings <b>Ornamentation</b>", mq4:"Mural painting <b>Fresco</b>", mq5:"Restoration <b>Heritage</b>",
+      manifesto:"Ornament is not decoration. It is <em>the memory of a gesture</em>, returned to the light — piece by piece, by hand.",
+      stat1:"years of craftsmanship", stat2:"artisans in the atelier today", stat4:"artisans led on site", stat3:"countries — Istanbul · Paris · French Riviera", meta_mark:"The atelier · by hand",
+      story_h:"A craft <em>of the hand</em>",
+      story1_idx:"— I · Modelling", story1_lbl:"Sculpture & ornament", story1_h:"Giving form <em>to matter</em>",
+      story1_p:"Acanthus leaves, rosettes, modillions and consoles: each ornament is modelled, cast, then fitted back to its original place. The rule is simple — to restore the first craftsman's gesture without betraying it.",
+      story1_cap:"Modillions & cornice · plaster",
+      story2_idx:"— II · Precision", story2_lbl:"Geometry & light", story2_h:"The rigour <em>of the line</em>",
+      story2_p:"A cornice is only true if its shadow is too. Profiles, dentils and offsets are drawn to gauge, run to template, then tested under raking light before installation.",
+      story2_cap:"Pilaster · base & profile",
+      story3_idx:"— III · Composition", story3_lbl:"Façade & composition", story3_h:"At the scale <em>of the building</em>",
+      story3_p:"From pediment to turret, from console to cartouche: the ornament resumes its place in the building's overall composition. A detail matters only through the whole it serves.",
+      story3_cap:"Façade ornament · plaster",
+      story4_idx:"— IV · Material", story4_lbl:"Plaster, stone & gold leaf", story4_h:"Time <em>held still</em>",
+      story4_p:"Fine plaster, natural pigments, traditional gold-leaf gilding: materials chosen to age truthfully. To restore is to return a surface to time — not to take it out of it.",
+      story4_cap:"Fluted pilaster · plaster",
+      proj_h:"Selected <em>projects</em>",
+      proj1_t:"Château — Clock tower", proj1_m:"Île-de-France · 2024–2025", proj1_d:"Pediment, modillions & dial · stucco & ornamentation",
+      proj2_t:"Château — Façades & ornaments", proj2_m:"Île-de-France · 2024–2025", proj2_d:"Façade ornaments, turrets & consoles",
+      proj3_t:"Hôtel Negresco — Nice", proj3_m:"French Riviera · 2025", proj3_d:"Wall décor, consolidation, cornices & façade",
+      proj4_t:"Console & cornice", proj4_m:"Heritage site · 2025", proj4_d:"Uncovering, casting & like-for-like reinstatement",
+      proj5_t:"Acanthus relief", proj5_m:"Ornamentation · 2025", proj5_d:"Cleaning, filling & fine-plaster retouching",
+      proj6_t:"Rosettes & modillions", proj6_m:"Atelier · 2025", proj6_d:"Turning, running & calibration before fitting",
+      band_lbl:"Centrepiece · French Riviera", band_h:"The palace <em>restored</em>",
+      band_p:"On the Promenade des Anglais, the façade of an emblematic palace: repair of the wall décor, consolidation and structural reinforcement, restoration of the cornices and exterior ornamentation. A goldsmith's work on the scale of a monument.",
+      neg_gal_lbl:"On site", neg_gal_p:"Details and gestures — façade ornaments, balusters, capitals and pediments find their original line again.", neg1_t:"Corinthian capital", neg1_s:"Acanthus & volute", neg2_t:"Balusters & cornice", neg2_s:"Curved balcony · plaster", neg3_t:"Laurel wreath", neg3_s:"Pediment · modelling", neg4_t:"By hand, in place", neg4_s:"Repair & adjustment", neg5_t:"Curved cornice", neg5_s:"Above the Promenade",
+      her_h:"The gesture, <em>across the sites</em>",
+      her_p:"Beyond the places, it is the gestures that remain: to model, to cast, to gild, to retouch. Two decades of work on heritage — from imperial palaces to gilded ceilings, from fresco to ornament.",
+      her1_t:"Restoration of painted & gilded ceilings", her1_s:"Gilding · decorative painting",
+      her2_t:"Gold-leaf gilding", her2_s:"Heritage ceilings",
+      her3_t:"Modelling & ornament repair", her3_s:"Atelier work · by hand",
+      her4_t:"Baroque décor & gilded stucco", her4_s:"Ornamentation · patina",
+      her5_t:"Polychrome mural painting", her5_s:"Natural pigments · fresco",
+      her6_t:"Painted medallions & rosettes", her6_s:"Decorative composition",
+      her7_t:"Cleaning, filling & retouching", her7_s:"Precision · heritage",
+      exp_h:"The <em>background</em>",
+      exp1_yr:"Since 2025", exp1_h:"Founder — Atelier MFK", exp1_pl:"Sole proprietorship · France",
+      exp1_p:"A restoration and ornamentation atelier bringing together a team of 7 artisans. Art restoration, mural decoration, gilding and stucco — for private clients, architects and heritage sites, in France and on the French Riviera.", exp1_tag:"Team of 7",
+      exp2_yr:"Since 2004", exp2_h:"Visual artist — Original & commissioned works", exp2_pl:"Istanbul · Ankara · Paris",
+      exp2_p:"Original works exhibited in Istanbul, Ankara and Paris. Bespoke commissions: sketches, technical study and final execution.", exp2_tag:"Fine Arts",
+      exp3_h:"Project lead — Imperial heritage", exp3_pl:"Ministry of Culture · Istanbul",
+      exp3_p:"Led the restoration of the mausoleums of Sultans Abdülhamid II, Mahmud II and Abdülaziz. Supervision of over 57 artisans: ceramics, mural painting, wood and stucco.", exp3_tag:"57 artisans",
+      exp4_h:"Site director — Historic palaces", exp4_pl:"Fehime & Hatice Sultan Palaces · Istanbul",
+      exp4_p:"Restoration of ceramics, stucco, wood and mural paintings. Coordination of a 15-person team following traditional heritage methods.", exp4_tag:"15 people",
+      exp5_h:"Art restorer — Religious monuments", exp5_pl:"Orthodox churches · Istanbul",
+      exp5_p:"Restoration of icons, mural paintings, wood and ceramics. Application of gold leaf in the traditional gilding technique.", exp5_tag:"Gilding",
+      exp6_h:"BA in Fine Arts", exp6_pl:"Marmara University · Istanbul",
+      exp6_p:"Painting techniques, colour theory, mural and large-format work. A crossover approach between traditional and contemporary art.", exp6_tag:"Degree",
+      cv_lbl:"Full dossier", cv_h:"Curriculum vitæ — Atelier MFK", cv_p:"The detailed background, skills and references, in one document.",
+      cv_btn:"Download CV", cv_btn2:"Get in touch",
+      at_lbl:"On site", at_h:"Where matter <em>takes shape</em>",
+      at_p:"Salons with patinated woodwork, Roman arch paintings, ceiling medallions: our work unfolds in places where every gesture answers the memory of the walls.",
+      ct_h:"Let's talk about <em>your project</em>", ct_p:"Restoration, ornamentation, gilding or a bespoke commission — every project begins with a conversation.",
+      ct_btn:"Write to the atelier", ct_mail:"Email", ct_loc:"Atelier",
+      foot_c:"© <span id='yr'></span> Atelier MFK — Atelier MFK. Art restoration & ornamentation.", foot_q:"Plaster, light and precision."
+    },
+    tr: {
+      docTitle:"Galeri — Atelier MFK",
+      gh_eyebrow:"Galeri · Atelier MFK", gh_h1_a:"El emeği,", gh_h1_b:"şantiyeler boyunca",
+      gh_intro:"Kültürel miras üzerine seçilmiş çalışmalar — tescilli şatolardan Côte d\u0027Azur saraylarına, modellenmiş bezemelerden yaldızlı tavanlara. Görsellerin akışında: madde, el, ve tekrarlanan el hareketi.",
+      sec1_h:"Şato — <em>Île-de-France</em>", sec1_meta:"2024 — 2025 · Saat kulesi<br>Cephe bezemeleri · alçı · modelleme",
+      sec2_h:"Hôtel Negresco — <em>Nice</em>", sec2_meta:"2025 · Promenade des Anglais<br>Duvar süslemeleri · kornişler · başlıklar",
+      sec3_h:"Miras — <em>geçmiş şantiyeler</em>", sec3_meta:"İstanbul · Paris<br>Saraylar, türbeler & anıtlar — yaldız, fresk, bezeme",
+      sec4_h:"Atölye — <em>mekânlar & malzemeler</em>", sec4_meta:"Salonlar, ahşap kaplamalar ve duvarların hafızası",
+      g_cap_chateau:"Şato · 2024–2025", g_cap_neg:"Negresco · 2025", g_cap_pat:"Miras", g_cap_at:"Atölye · in situ",
+      cta_eyebrow:"Aklınızda bir proje mi var?", cta_h_a:"Projenizi", cta_h_b:"konuşalım", cta_btn:"Devis isteyin",
+      nav_savoir:"Zanaat", nav_projets:"Projeler", nav_heritage:"Miras", nav_parcours:"Geçmiş", nav_atelier:"Atölye", nav_contact:"İletişim",
+      hero_eyebrow:"Sanat restorasyonu · Bezeme · Kültürel miras",
+      hero_sub:"Alçı, ışık ve hassasiyet. Yirmi yıldır kültürel mirasın hizmetinde — modellemeden yaldıza, freskten taşa.",
+      hero_cta1:"Projeleri gör", hero_cta2:"Atölyeyi keşfet", scroll:"Kaydır",
+      mq1:"Modelleme <b>Dekoratif heykel</b>", mq2:"Varak yaldız <b>Patina</b>", mq3:"Alçı & silmeler <b>Bezeme</b>", mq4:"Duvar resmi <b>Fresk</b>", mq5:"Restorasyon <b>Miras</b>",
+      manifesto:"Bezeme bir süs değildir. O, <em>bir el hareketinin hafızasıdır</em> — parça parça, elle, yeniden ışığa kavuşturulur.",
+      stat1:"yıllık ustalık", stat2:"bugün atölyedeki zanaatkâr", stat4:"şantiyede yönetilen zanaatkâr", stat3:"ülke — İstanbul · Paris · Cote d'Azur", meta_mark:"Atölye · elle",
+      story_h:"Elden gelen <em>bir ustalık</em>",
+      story1_idx:"— I · Modelleme", story1_lbl:"Heykel & bezeme", story1_h:"Maddeye <em>biçim vermek</em>",
+      story1_p:"Akantuslar, rozaslar, modiyonlar ve konsollar: her bezeme önce modellenir, kalıplanır, sonra özgün yerine yerleştirilir. Kural basittir — ilk ustanın el hareketini, ona ihanet etmeden geri kazandırmak.",
+      story1_cap:"Modiyonlar & korniş · alçı",
+      story2_idx:"— II · Hassasiyet", story2_lbl:"Geometri & ışık", story2_h:"Çizginin <em>titizliği</em>",
+      story2_p:"Bir korniş, ancak gölgesi de doğruysa doğrudur. Profiller, diş sıraları ve çıkıntılar şablonla çizilir, kalıpla çekilir, yerleştirilmeden önce yatay ışık altında sınanır.",
+      story2_cap:"Pilastr · taban & profil",
+      story3_idx:"— III · Kompozisyon", story3_lbl:"Cephe & kompozisyon", story3_h:"Yapının <em>ölçeğinde</em>",
+      story3_p:"Alınlıktan küçük kuleye, konsoldan kartuşa: bezeme, yapının genel kompozisyonundaki yerine geri döner. Bir ayrıntı, ancak hizmet ettiği bütünle değer kazanır.",
+      story3_cap:"Cephe bezemesi · alçı",
+      story4_idx:"— IV · Malzeme", story4_lbl:"Alçı, taş & altın varak", story4_h:"Tutulan <em>zaman</em>",
+      story4_p:"İnce alçı, doğal pigmentler, geleneksel varak yaldız: doğru yaşlanması için seçilmiş malzemeler. Restore etmek, bir yüzeyi zamana geri vermektir — onu zamandan çekip almak değil.",
+      story4_cap:"Yivli pilastr · alçı",
+      proj_h:"Seçilmiş <em>projeler</em>",
+      proj1_t:"Şato — Saat kulesi", proj1_m:"Île-de-France · 2024–2025", proj1_d:"Alınlık, modiyonlar & kadran · alçı & bezeme",
+      proj2_t:"Şato — Cepheler & bezemeler", proj2_m:"Île-de-France · 2024–2025", proj2_d:"Cephe bezemeleri, kuleler & konsollar",
+      proj3_t:"Hôtel Negresco — Nice", proj3_m:"Cote d'Azur · 2025", proj3_d:"Duvar süslemeleri, takviye, kornişler & cephe",
+      proj4_t:"Konsol & korniş", proj4_m:"Miras şantiyesi · 2025", proj4_d:"Açığa çıkarma, kalıplama & aslına uygun yenileme",
+      proj5_t:"Akantus kabartması", proj5_m:"Bezeme · 2025", proj5_d:"Temizlik, dolgu & ince alçıyla rötuş",
+      proj6_t:"Rozaslar & modiyonlar", proj6_m:"Atölye · 2025", proj6_d:"Tornalama, profil çekme & yerleştirme öncesi ayar",
+      band_lbl:"Başyapıt · Cote d'Azur", band_h:"Yeniden doğan <em>saray</em>",
+      band_p:"Promenade des Anglais üzerinde, simge bir sarayın cephesi: duvar süslemelerinin onarımı, yapının takviyesi ve güçlendirilmesi, kornişlerin ve dış cephe bezemesinin yenilenmesi. Bir anıt ölçeğinde kuyumcu işçiliği.",
+      neg_gal_lbl:"Şantiyede", neg_gal_p:"Ayrıntılar ve el hareketleri — cephe bezemeleri, balustlar, başlıklar ve alınlıklar özgün çizgilerine yeniden kavuşur.", neg1_t:"Korint başlığı", neg1_s:"Akantus & volüt", neg2_t:"Balustlar & korniş", neg2_s:"Eğri balkon · alçı", neg3_t:"Defne çelengi", neg3_s:"Alınlık · modelleme", neg4_t:"Elle, yerinde", neg4_s:"Onarım & ayar", neg5_t:"Eğri korniş", neg5_s:"Promenade'in üzerinde",
+      her_h:"El emeği, <em>şantiyeler boyunca</em>",
+      her_p:"Mekânların ötesinde geriye kalan, el hareketleridir: modellemek, kalıplamak, yaldızlamak, rötuşlamak. Kültürel miras üzerine yirmi yıllık emek — imparatorluk saraylarından yaldızlı tavanlara, freskten bezemeye.",
+      her1_t:"Boyalı & yaldızlı tavan restorasyonu", her1_s:"Yaldız · dekoratif boyama",
+      her2_t:"Altın varak yaldız", her2_s:"Tarihi tavanlar",
+      her3_t:"Modelleme & bezeme onarımı", her3_s:"Atölye işi · elle",
+      her4_t:"Barok süslemeler & yaldızlı alçı", her4_s:"Bezeme · patina",
+      her5_t:"Çok renkli duvar resmi", her5_s:"Doğal pigmentler · fresk",
+      her6_t:"Boyalı madalyonlar & rozaslar", her6_s:"Dekoratif kompozisyon",
+      her7_t:"Temizlik, dolgu & rötuş", her7_s:"Hassasiyet · miras",
+      exp_h:"<em>Geçmiş</em>",
+      exp1_yr:"2025'ten beri", exp1_h:"Kurucu — Atelier MFK", exp1_pl:"Şahıs işletmesi · Fransa",
+      exp1_p:"7 zanaatkârdan oluşan bir ekibi bir araya getiren restorasyon ve bezeme atölyesi. Sanat restorasyonu, duvar dekorasyonu, yaldız ve alçı — özel müşteriler, mimarlar ve miras şantiyeleri için; Fransa'da ve Cote d'Azur'de.", exp1_tag:"7 kişilik ekip",
+      exp2_yr:"2004'ten beri", exp2_h:"Plastik sanatçı — Özgün & ısmarlama eserler", exp2_pl:"İstanbul · Ankara · Paris",
+      exp2_p:"İstanbul, Ankara ve Paris'te sergilenen özgün eserler. Ismarlama çalışmalar: eskiz, teknik etüt ve nihai uygulama.", exp2_tag:"Güzel Sanatlar",
+      exp3_h:"Proje şefi — İmparatorluk mirası", exp3_pl:"Kültür Bakanlığı · İstanbul",
+      exp3_p:"Sultan II. Abdülhamid, II. Mahmud ve Abdülaziz türbelerinin restorasyon yönetimi. 57'den fazla zanaatkârın denetimi: seramik, duvar resmi, ahşap ve alçı.", exp3_tag:"57 zanaatkâr",
+      exp4_h:"Şantiye direktörü — Tarihi saraylar", exp4_pl:"Fehime & Hatice Sultan Sarayları · İstanbul",
+      exp4_p:"Seramik, alçı, ahşap ve duvar resimlerinin restorasyonu. Geleneksel miras yöntemleriyle 15 kişilik ekibin koordinasyonu.", exp4_tag:"15 kişi",
+      exp5_h:"Sanat restoratörü — Dini anıtlar", exp5_pl:"Ortodoks kiliseleri · İstanbul",
+      exp5_p:"İkona, duvar resmi, ahşap ve seramik restorasyonu. Geleneksel yaldız tekniğiyle altın varak uygulaması.", exp5_tag:"Yaldız",
+      exp6_h:"Güzel Sanatlar Lisansı", exp6_pl:"Marmara Üniversitesi · İstanbul",
+      exp6_p:"Resim teknikleri, renk teorisi, duvar resmi ve büyük ölçekli çalışma. Geleneksel ve çağdaş sanat arasında köprü kuran bir yaklaşım.", exp6_tag:"Diploma",
+      cv_lbl:"Tam dosya", cv_h:"Özgeçmiş — Atelier MFK", cv_p:"Ayrıntılı geçmiş, yetkinlikler ve referanslar, tek bir belgede.",
+      cv_btn:"CV'yi indir", cv_btn2:"İletişime geç",
+      at_lbl:"Şantiyede", at_h:"Maddenin <em>biçimlendiği yer</em>",
+      at_p:"Patina kazanmış ahşap kaplamalı salonlar, Roma kemerli tablolar, madalyonlu tavanlar: çalışmalarımız, her el hareketinin duvarların hafızasına yanıt verdiği mekânlarda geçer.",
+      ct_h:"<em>Projenizi</em> konuşalım", ct_p:"Restorasyon, bezeme, yaldız ya da ısmarlama bir iş — her şantiye bir sohbetle başlar.",
+      ct_btn:"Atölyeye yazın", ct_mail:"E-posta", ct_loc:"Atölye",
+      foot_c:"© <span id='yr'></span> Atelier MFK — Atelier MFK. Sanat restorasyonu & bezeme.", foot_q:"Alçı, ışık ve hassasiyet."
+    }
+  };
+
+  function applyLang(lang){
+    const dict = I18N[lang] || I18N.fr;
+    document.documentElement.lang = lang;
+    document.title = dict.docTitle;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.getAttribute('data-i18n');
+      if(dict[k]!==undefined) el.innerHTML = dict[k];
+    });
+    // restore year inside foot_c
+    const yr=document.getElementById('yr'); if(yr) yr.textContent=new Date().getFullYear();
+    // update project lightbox data attributes
+    document.querySelectorAll('.pcard').forEach(c=>{
+      const tk=c.getAttribute('data-tk'), mk=c.getAttribute('data-mk');
+      if(tk&&dict[tk]) c.setAttribute('data-t',dict[tk].replace(/<[^>]+>/g,''));
+      if(mk&&dict[mk]) c.setAttribute('data-m',dict[mk].replace(/<[^>]+>/g,''));
+    });
+    // marquee duplicate refresh
+    const mqEl=document.getElementById('mq');
+    if(mqEl){ const base=['mq1','mq2','mq3','mq4','mq5'].map(k=>'<span>'+dict[k]+'</span>').join(''); mqEl.innerHTML=base+base; }
+    // active button
+    document.querySelectorAll('#langSwitch button').forEach(b=>b.classList.toggle('active',b.getAttribute('data-lang')===lang));
+    try{ localStorage.setItem('mfk_lang',lang); }catch(e){}
+  }
+
+  document.querySelectorAll('#langSwitch button').forEach(b=>{
+    b.addEventListener('click',()=>applyLang(b.getAttribute('data-lang')));
+  });
+
+  // initial language: saved -> browser -> fr
+  (function(){
+    let init='fr';
+    try{ const s=localStorage.getItem('mfk_lang'); if(s) init=s; else { const n=(navigator.language||'fr').slice(0,2); if(['fr','en','tr'].includes(n)) init=n; } }catch(e){}
+    applyLang(init);
+  })();
+
+</script>
+</body>
+</html>
