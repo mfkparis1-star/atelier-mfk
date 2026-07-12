@@ -366,6 +366,23 @@
   .svc-cli p{max-width:58ch;color:var(--warm-dim);font-size:15.5px}
   .insp{padding-top:clamp(70px,9vw,130px)}
   .insp .sec-head{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  /* ============ DEVIS FORM ============ */
+  .devis-form{margin-top:28px;display:flex;flex-direction:column;gap:14px;max-width:520px}
+  .fm-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .devis-form input,.devis-form select,.devis-form textarea{
+    width:100%;background:var(--anthracite);border:1px solid var(--line);border-radius:3px;
+    color:var(--warm);font-family:var(--sans);font-weight:300;font-size:14.5px;padding:13px 15px;
+    transition:border-color .4s var(--ease);appearance:none;-webkit-appearance:none}
+  .devis-form select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a39c91' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
+  .devis-form input::placeholder,.devis-form textarea::placeholder{color:var(--warm-faint)}
+  .devis-form input:focus,.devis-form select:focus,.devis-form textarea:focus{outline:none;border-color:var(--bronze)}
+  .devis-form textarea{resize:vertical;min-height:100px}
+  .devis-form button{align-self:flex-start;cursor:pointer;border:none}
+  .fm-note{font-size:13px;color:var(--warm-dim)}
+  .devis-ok{display:none;border:1px solid var(--bronze);background:rgba(176,137,79,.08);color:var(--bronze-soft);
+    padding:14px 18px;border-radius:3px;font-size:14.5px;margin-top:24px}
+  .devis-ok.show{display:block}
+  @media(max-width:560px){.fm-row{grid-template-columns:1fr}}
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     .marquee-track{animation:none!important}
@@ -742,7 +759,30 @@
     <div class="rv">
       <h2 data-i18n="ct_h">Parlons de <em>votre projet</em></h2>
       <p class="lead" data-i18n="ct_p">Restauration, ornementation, dorure ou création sur mesure — décrivez-nous votre chantier. Réponse sous 48 h, visite sur site si nécessaire et devis gratuit.</p>
-      <a href="mailto:info@mfatihkucuk.com" class="btn btn-solid"><span data-i18n="ct_btn">Demander un devis</span> <span class="arw">→</span></a>
+      <div class="devis-ok" id="devisOk" data-i18n="fm_ok">✓ Votre demande a bien été envoyée. Nous revenons vers vous sous 48 h.</div>
+      <form class="devis-form" action="https://formsubmit.co/info@mfatihkucuk.com" method="POST">
+        <input type="hidden" name="_subject" value="Demande de devis — ateliermfk.com">
+        <input type="hidden" name="_next" value="https://ateliermfk.com/#devis-envoye">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none">
+        <div class="fm-row">
+          <input type="text" name="nom" required data-i18n-ph="fm_nom" placeholder="Nom / Société *">
+          <input type="email" name="email" required data-i18n-ph="fm_email" placeholder="Courriel *">
+        </div>
+        <div class="fm-row">
+          <input type="tel" name="telephone" data-i18n-ph="fm_tel" placeholder="Téléphone">
+          <select name="type_de_projet">
+            <option value="Restauration" data-i18n="fm_o1">Restauration de patrimoine</option>
+            <option value="Ornementation" data-i18n="fm_o2">Staff, stuc & ornementation</option>
+            <option value="Dorure" data-i18n="fm_o3">Dorure & patine</option>
+            <option value="Peinture décorative" data-i18n="fm_o4">Peinture décorative & fresque</option>
+            <option value="Autre" data-i18n="fm_o5">Autre projet</option>
+          </select>
+        </div>
+        <textarea name="message" rows="4" required data-i18n-ph="fm_msg" placeholder="Décrivez votre chantier : lieu, nature des travaux, délais souhaités… *"></textarea>
+        <button type="submit" class="btn btn-solid"><span data-i18n="ct_btn">Envoyer la demande</span> <span class="arw">→</span></button>
+        <p class="fm-note" data-i18n="fm_note">Réponse sous 48 h · Ou par courriel : <a href="mailto:info@mfatihkucuk.com" style="color:var(--bronze-soft)">info@mfatihkucuk.com</a></p>
+      </form>
     </div>
     <div class="ccard rv rv-d1">
       <div class="crow"><span class="ck" data-i18n="ct_mail">Courriel</span><a class="cv2" href="mailto:info@mfatihkucuk.com">info@mfatihkucuk.com</a></div>
@@ -789,6 +829,9 @@
 </div>
 
 <script>
+
+  // devis success banner
+  if(location.hash==='#devis-envoye'){var ok=document.getElementById('devisOk');if(ok){ok.classList.add('show');document.getElementById('contact').scrollIntoView();}}
   // nav scroll state
   const nav=document.getElementById('nav');
   addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>40)},{passive:true});
@@ -917,7 +960,12 @@
       at_lbl:"Sur les chantiers", at_h:"Où la matière <em>prend forme</em>",
       at_p:"Salons aux boiseries patinées, tableaux d'arches romaines, plafonds à médaillon : nos chantiers se déroulent dans des lieux où le geste répond à la mémoire des murs.",
       ct_h:"Parlons de <em>votre projet</em>", ct_p:"Restauration, ornementation, dorure ou création sur mesure — décrivez-nous votre chantier. Réponse sous 48 h, visite sur site si nécessaire et devis gratuit.",
-      ct_btn:"Demander un devis", ct_mail:"Courriel", ct_loc:"Atelier",
+      ct_btn:"Envoyer la demande", ct_mail:"Courriel", ct_loc:"Atelier",
+      fm_nom:"Nom / Société *", fm_email:"Courriel *", fm_tel:"Téléphone",
+      fm_o1:"Restauration de patrimoine", fm_o2:"Staff, stuc & ornementation", fm_o3:"Dorure & patine", fm_o4:"Peinture décorative & fresque", fm_o5:"Autre projet",
+      fm_msg:"Décrivez votre chantier : lieu, nature des travaux, délais souhaités… *",
+      fm_note:"Réponse sous 48 h · Ou par courriel : <a href='mailto:info@mfatihkucuk.com' style='color:var(--bronze-soft)'>info@mfatihkucuk.com</a>",
+      fm_ok:"✓ Votre demande a bien été envoyée. Nous revenons vers vous sous 48 h.",
       ct_tva:"TVA", ct_tva_v:"Non applicable — art. 293 B du CGI", ct_ass:"Assurances", ct_ass_v:"Décennale & RC pro — attestations sur demande", foot_ml:"Mentions légales",
       foot_c:"© <span id='yr'></span> Atelier MFK. Restauration d'art & ornementation.", foot_q:"Plâtre, lumière et précision."
     },
@@ -993,7 +1041,12 @@
       at_lbl:"On site", at_h:"Where matter <em>takes shape</em>",
       at_p:"Salons with patinated woodwork, Roman arch paintings, ceiling medallions: our work unfolds in places where every gesture answers the memory of the walls.",
       ct_h:"Let's talk about <em>your project</em>", ct_p:"Restoration, ornamentation, gilding or a bespoke commission — tell us about your project. Reply within 48 hours, site visit if needed, free quotation.",
-      ct_btn:"Request a quote", ct_mail:"Email", ct_loc:"Atelier",
+      ct_btn:"Send the request", ct_mail:"Email", ct_loc:"Atelier",
+      fm_nom:"Name / Company *", fm_email:"Email *", fm_tel:"Phone",
+      fm_o1:"Heritage restoration", fm_o2:"Staff, stucco & ornamentation", fm_o3:"Gilding & patina", fm_o4:"Decorative painting & fresco", fm_o5:"Other project",
+      fm_msg:"Describe your project: location, nature of the works, desired timeline… *",
+      fm_note:"Reply within 48 h · Or by email: <a href='mailto:info@mfatihkucuk.com' style='color:var(--bronze-soft)'>info@mfatihkucuk.com</a>",
+      fm_ok:"✓ Your request has been sent. We will get back to you within 48 hours.",
       ct_tva:"VAT", ct_tva_v:"Not applicable — art. 293 B, French Tax Code", ct_ass:"Insurance", ct_ass_v:"Ten-year & professional liability — certificates on request", foot_ml:"Legal notice",
       foot_c:"© <span id='yr'></span> Atelier MFK. Art restoration & ornamentation.", foot_q:"Plaster, light and precision."
     }
@@ -1006,6 +1059,10 @@
     document.querySelectorAll('[data-i18n]').forEach(el=>{
       const k = el.getAttribute('data-i18n');
       if(dict[k]!==undefined) el.innerHTML = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+      const k = el.getAttribute('data-i18n-ph');
+      if(dict[k]!==undefined) el.setAttribute('placeholder', dict[k]);
     });
     // restore year inside foot_c
     const yr=document.getElementById('yr'); if(yr) yr.textContent=new Date().getFullYear();
